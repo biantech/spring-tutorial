@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop-3.1.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd"
+       default-lazy-init="true">
+    <bean id="aopLog" class="com.biantech.spring4.samples.aop.advice.AopLogAdvice"/>
+    <aop:config proxy-target-class="true" expose-proxy="true">
+        <aop:aspect id="log" ref="aopLog">
+            <aop:pointcut id="allAddMethod"
+                          expression="@annotation(com.biantech.spring4.samples.aop.annotation.TimeLog)"/>
+            <aop:around method="doAround" pointcut-ref="allAddMethod"/>
+        </aop:aspect>
+    </aop:config>
+    <bean id="eventListener" class="com.biantech.spring4.samples.aop.advice.ApplicationEventListener"></bean>
+    <task:executor id="qmqExecutor" pool-size="10" queue-capacity="80" keep-alive="120"/>
+    <task:annotation-driven executor="qmqExecutor" />
+</beans>
